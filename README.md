@@ -1,50 +1,89 @@
-# React + TypeScript + Vite
+# Vite Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este projeto utiliza o **Vite** como ferramenta de build para desenvolvimento rápido de aplicações frontend. A seguir estão as instruções para configurar e rodar o projeto localmente.
 
-Currently, two official plugins are available:
+## Requisitos
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Node.js** (versão 14 ou superior)
+- **npm** ou **yarn** para gerenciamento de pacotes
 
-## Expanding the ESLint configuration
+## Instalação
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Siga os passos abaixo para configurar o projeto em sua máquina local.
 
-- Configure the top-level `parserOptions` property like this:
+1. **Clone o repositório**:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+   Execute o comando abaixo para clonar o repositório:
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+   ```bash
+   git clone https://github.com/seu-usuario/seu-projeto.git
+   cd seu-projeto
+   ```
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+2. **Instalar dependências**:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+   Após clonar o repositório, instale as dependências do projeto executando:
+
+   - Com **npm**:
+
+     ```bash
+     npm install
+     ```
+
+   - Com **yarn**:
+     ```bash
+     yarn install
+     ```
+
+## Executando o Projeto
+
+Após a instalação das dependências, você pode rodar o projeto em modo de desenvolvimento ou buildá-lo para produção.
+
+### Modo de Desenvolvimento
+
+Para iniciar o servidor de desenvolvimento:
+
+- Com **npm**:
+
+  ```bash
+  npm run dev
+  ```
+
+- Com **yarn**:
+  ```bash
+  yarn dev
+  ```
+
+Por padrão, o projeto estará acessível em `http://localhost:5173/`.
+
+### Build para Produção
+
+Para gerar os arquivos otimizados para produção, execute o comando:
+
+- Com **npm**:
+
+  ```bash
+  npm run build
+  ```
+
+- Com **yarn**:
+  ```bash
+  yarn build
+  ```
+
+Os arquivos otimizados serão gerados na pasta `dist/`.
+
+### Servir Arquivos de Produção
+
+Se quiser servir os arquivos de produção localmente para teste, execute:
+
+- Com **npm**:
+
+  ```bash
+  npm run serve
+  ```
+
+- Com **yarn**:
+  ```bash
+  yarn serve
+  ```
