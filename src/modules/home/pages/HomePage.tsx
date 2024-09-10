@@ -1,12 +1,7 @@
 import { Box } from "@mui/material";
-import { useGetCompanies } from "../api";
 import Table from "../components/table";
 
 export const HomePage = () => {
-  const { data } = useGetCompanies({ config: {} });
-
-  console.log(data, " data");
-
   return (
     <Box
       sx={{

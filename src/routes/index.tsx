@@ -1,15 +1,6 @@
 import { useAuth } from "@/context/useAuth";
-import { lazyImport } from "../utils";
-
-const { ProtectedRoutes } = lazyImport(
-  async () => await import("./ProtectedRoutes"),
-  "ProtectedRoutes"
-);
-
-const { PublicRoutes } = lazyImport(
-  async () => await import("./PublicRoutes"),
-  "PublicRoutes"
-);
+import { ProtectedRoutes } from "./ProtectedRoutes";
+import { PublicRoutes } from "./PublicRoutes";
 
 export const AppRoutes = (): JSX.Element => {
   const user = useAuth();

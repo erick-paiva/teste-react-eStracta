@@ -1,11 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { ChangeEvent, MouseEvent, useMemo } from "react";
 import {
   useReactTable,
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getSortedRowModel,
-  SortingState,
 } from "@tanstack/react-table";
 import {
   Paper,
@@ -18,254 +16,11 @@ import {
   TableSortLabel,
   TablePagination,
   TextField,
+  CircularProgress,
 } from "@mui/material";
-import { Mask } from "@/utils";
-
-// Mock de dados
-const mock = {
-  companies: [
-    {
-      cnae: "62010",
-      cnpj: "37858684000177",
-      id: 2,
-      legal_name: "Acme Corp 22",
-      trade_name: "Acme",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-    {
-      cnae: "62010",
-      cnpj: "55113070000148",
-      id: 1,
-      legal_name: "Acme Corp 4",
-      trade_name: "Acme 4",
-    },
-  ],
-  listed_items: 2,
-  total_items: 2,
-};
+import { debounce, Mask } from "@/utils";
+import { useGetCompanies } from "../api";
+import { useFilters } from "@/hooks";
 
 interface Company {
   cnae: string;
@@ -276,20 +31,25 @@ interface Company {
 }
 
 const Table: React.FC = () => {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const { setSearchParams, getSearchParam } = useFilters();
 
-  // Filtro para busca por nome fantasia ou razão social
-  const filteredData = useMemo(() => {
-    if (!searchTerm) return mock.companies;
-    return mock.companies.filter(
-      (company) =>
-        company.legal_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        company.trade_name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm]);
+  const name = getSearchParam("name") ?? "";
+
+  const pageSize = Number(getSearchParam("pageSize") ?? "25");
+
+  const pageIndex = Number(getSearchParam("pageIndex") ?? "0");
+
+  const { data, isPending } = useGetCompanies({
+    config: {
+      params: {
+        ...(name && { name }),
+        ...(pageIndex && !name && { start: pageIndex * pageSize }),
+        limit: pageSize,
+      },
+    },
+  });
+
+  const totalItems = data?.total_items ?? 0;
 
   const columns = useMemo<ColumnDef<Company>[]>(
     () => [
@@ -306,16 +66,35 @@ const Table: React.FC = () => {
   );
 
   const table = useReactTable({
-    data: filteredData,
+    data: data?.companies ?? [],
     columns,
-    state: {
-      sorting,
-      pagination: { pageIndex, pageSize },
-    },
-    onSortingChange: setSorting,
+
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    // getSortedRowModel: getSortedRowModel(),
   });
+
+  const onRowsPerPageChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setSearchParams("pageSize", event.target.value);
+  };
+
+  const onPageChange = (
+    _event: MouseEvent<HTMLButtonElement> | null,
+    page: number
+  ) => {
+    setSearchParams("pageIndex", page.toString());
+  };
+
+  const debouncedChangeHandler = debounce((value) => {
+    setSearchParams("name", value);
+  }, 500);
+
+  const handleSearch = ({
+    currentTarget: { value },
+  }: ChangeEvent<HTMLInputElement>) => {
+    debouncedChangeHandler(value);
+  };
 
   return (
     <Paper
@@ -333,69 +112,80 @@ const Table: React.FC = () => {
         variant="outlined"
         fullWidth
         margin="normal"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        defaultValue={name}
+        onChange={handleSearch}
         style={{ maxWidth: "90%" }}
       />
-      <TableContainer style={{ overflow: "auto", maxHeight: "40rem" }}>
-        <MuiTable stickyHeader>
-          <TableHead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableCell
-                    key={header.id}
-                    sx={{
-                      fontWeight: "bold",
-                      position: "sticky",
-                      top: 0,
-                      backgroundColor: "#fff",
-                      zIndex: 1,
-                    }}
-                  >
-                    {header.isPlaceholder ? null : (
-                      <TableSortLabel
-                        active={!!header.column.getIsSorted()}
-                        direction={
-                          header.column.getIsSorted() === "desc"
-                            ? "desc"
-                            : "asc"
-                        }
-                        onClick={header.column.getToggleSortingHandler()}
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </TableSortLabel>
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableHead>
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </MuiTable>
-      </TableContainer>
+      {isPending ? (
+        <CircularProgress />
+      ) : (
+        <TableContainer style={{ overflow: "auto", maxHeight: "40rem" }}>
+          <MuiTable stickyHeader>
+            <TableHead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableCell
+                      key={header.id}
+                      sx={{
+                        fontWeight: "bold",
+                        position: "sticky",
+                        top: 0,
+                        backgroundColor: "#fff",
+                        zIndex: 1,
+                      }}
+                    >
+                      {header.isPlaceholder ? null : (
+                        <TableSortLabel
+                          active={!!header.column.getIsSorted()}
+                          direction={
+                            header.column.getIsSorted() === "desc"
+                              ? "desc"
+                              : "asc"
+                          }
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </TableSortLabel>
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHead>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </MuiTable>
+        </TableContainer>
+      )}
+      {totalItems === 0 && !isPending && <h2>Sem dados</h2>}
       <TablePagination
         component="div"
         style={{ background: "#f0f0f0a4", width: "100%" }}
-        count={mock.total_items}
+        count={totalItems}
         page={pageIndex}
-        onPageChange={(_event, newPage) => setPageIndex(newPage)}
+        onPageChange={onPageChange}
         rowsPerPage={pageSize}
-        onRowsPerPageChange={(event) => setPageSize(Number(event.target.value))}
+        onRowsPerPageChange={onRowsPerPageChange}
         rowsPerPageOptions={[25, 30]}
+        labelDisplayedRows={({ from, to, count }) =>
+          `${from}–${to} de ${count !== -1 ? count : `mais do que ${to}`}`
+        }
         labelRowsPerPage="Linhas por página"
       />
     </Paper>

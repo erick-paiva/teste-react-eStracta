@@ -39,8 +39,6 @@ export default {
     return unathenticatedInstance;
   },
   authorized() {
-    console.log(cookies.getAccess(), "  cookies.getAccess()");
-
     authenticatedInstance.defaults.headers.common.Authorization =
       cookies.getAccess() as string;
 
