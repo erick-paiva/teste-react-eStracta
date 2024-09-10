@@ -1,17 +1,27 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Card,
+  CardContent,
+  CircularProgress,
+} from "@mui/material";
 import { loginSchema } from "../validators";
-import { useAuth } from "../../../context";
+import { useAuth } from "@/context";
+import { useLoginWithUsernameAndPassword } from "@/api/auth/hooks";
+import { toast } from "react-toastify";
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
-export const LoginPage = () => {
+export const LoginPage: React.FC = () => {
   const { login } = useAuth();
-  const [error, setError] = useState("");
+
+  const { mutate, isPending } = useLoginWithUsernameAndPassword();
 
   const {
     register,
@@ -22,39 +32,69 @@ export const LoginPage = () => {
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
-    try {
-      const response = await axios.post(
-        "https://jsonplaceholder.typicode.com/posts",
-        data
-      );
-      const token = response.data.token; // Supondo que a API retorna um token
-      login(token);
-    } catch (_) {
-      setError("Failed to login. Please try again.");
-    }
+    mutate(data, {
+      onSuccess: (response) => {
+        const token = response.token;
+        login(token);
+        toast.success("Login feito com sucesso!", { autoClose: 1000 });
+      },
+      onError: () => {
+        toast.error("Nome do usuário ou senha incorretos!", {
+          autoClose: 1500,
+        });
+      },
+    });
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label>Username</label>
-          <input type="text" {...register("username")} />
-          {errors.username && (
-            <p style={{ color: "red" }}>{errors.username.message}</p>
-          )}
-        </div>
-        <div>
-          <label>Password</label>
-          <input type="password" {...register("password")} />
-          {errors.password && (
-            <p style={{ color: "red" }}>{errors.password.message}</p>
-          )}
-        </div>
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100vw",
+      }}
+    >
+      <Card sx={{ maxWidth: 400, width: "100%" }}>
+        <CardContent>
+          <Typography variant="h5" component="div" gutterBottom align="center">
+            Login gerenciamento de empresas
+          </Typography>
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <TextField
+              fullWidth
+              label="Nome do usuário"
+              margin="normal"
+              {...register("username")}
+              error={!!errors.username}
+              helperText={errors.username?.message}
+            />
+            <TextField
+              fullWidth
+              label="Senha"
+              type="password"
+              margin="normal"
+              {...register("password")}
+              error={!!errors.password}
+              helperText={errors.password?.message}
+            />
+            <Box
+              sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}
+            >
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={isPending}
+              >
+                {isPending ? <CircularProgress size={24} /> : "Login"}
+              </Button>
+            </Box>
+          </form>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };

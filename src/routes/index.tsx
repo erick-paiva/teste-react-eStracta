@@ -14,7 +14,9 @@ const { PublicRoutes } = lazyImport(
 export const AppRoutes = (): JSX.Element => {
   const user = useAuth();
 
-  console.log(user, " user");
-
-  return user?.isAuthenticated ? <ProtectedRoutes /> : <PublicRoutes />;
+  return user?.isAuthenticated === true ? (
+    <ProtectedRoutes />
+  ) : (
+    <PublicRoutes />
+  );
 };
