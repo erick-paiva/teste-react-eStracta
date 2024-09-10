@@ -392,7 +392,7 @@ const Table: React.FC = () => {
         style={{ background: "#f0f0f0a4", width: "100%" }}
         count={mock.total_items}
         page={pageIndex}
-        onPageChange={(event, newPage) => setPageIndex(newPage)}
+        onPageChange={(_event, newPage) => setPageIndex(newPage)}
         rowsPerPage={pageSize}
         onRowsPerPageChange={(event) => setPageSize(Number(event.target.value))}
         rowsPerPageOptions={[25, 30]}
