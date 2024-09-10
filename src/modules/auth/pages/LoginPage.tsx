@@ -12,9 +12,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { loginSchema } from "../validators";
-import { useAuth } from "@/context";
-import { useLoginWithUsernameAndPassword } from "@/api/auth/hooks";
 import { toast } from "react-toastify";
+import { useAuth } from "@/context";
+import { useLoginWithUsernameAndPassword } from "@/api";
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
 

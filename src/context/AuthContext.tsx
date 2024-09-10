@@ -1,32 +1,28 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { cookies } from "@/utils";
+import React, { createContext, useState, ReactNode } from "react";
 
-interface AuthContextProps {
+type AuthContextProps = {
   isAuthenticated: boolean;
   login: (token: string) => void;
   logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextProps | undefined>(undefined);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };
+
+export const AuthContext = createContext<AuthContextProps | undefined>(
+  undefined
+);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    const token = localStorage.getItem("token");
+    const token = cookies.getAccess();
     return !!token;
   });
 
   const login = (token: string) => {
-    localStorage.setItem("token", token);
     setIsAuthenticated(true);
+
+    cookies.setAccess(token);
   };
 
   const logout = () => {

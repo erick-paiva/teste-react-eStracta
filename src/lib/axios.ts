@@ -39,9 +39,10 @@ export default {
     return unathenticatedInstance;
   },
   authorized() {
-    authenticatedInstance.defaults.headers.common.Authorization = `Bearer ${
-      cookies.getAccess() as string
-    }`;
+    console.log(cookies.getAccess(), "  cookies.getAccess()");
+
+    authenticatedInstance.defaults.headers.common.Authorization =
+      cookies.getAccess() as string;
 
     authenticatedInstance.interceptors.request.use(
       function (config) {

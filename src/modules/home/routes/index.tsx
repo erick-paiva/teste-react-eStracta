@@ -1,15 +1,10 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import { LoginPage } from "../pages";
-import { storage } from "../../../utils";
+import { Route, Routes } from "react-router-dom";
+import { HomePage } from "../pages";
 
-export const AuthRoutes = () => {
-  const user = storage.getUser();
-
+export const HomeRoutes = () => {
   return (
     <Routes>
-      <Route path="login" element={<LoginPage />} />
-
-      {!user && <Route path="*" element={<Navigate to="login" />} />}
+      <Route index element={<HomePage />} />
     </Routes>
   );
 };
