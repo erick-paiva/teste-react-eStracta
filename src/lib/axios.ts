@@ -27,6 +27,9 @@ authenticatedInstance.interceptors.response.use(
     if (error.response) {
       if (error.response.status !== 401 && error.response.status !== 403) {
         return await Promise.reject(error);
+      } else {
+        cookies.clearAccess();
+        window.location.href = "/";
       }
     }
   }

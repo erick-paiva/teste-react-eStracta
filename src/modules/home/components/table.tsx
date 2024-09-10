@@ -1,10 +1,4 @@
-import React, { ChangeEvent, MouseEvent, useMemo } from "react";
-import {
-  useReactTable,
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-} from "@tanstack/react-table";
+import React, { ChangeEvent, MouseEvent } from "react";
 import {
   Paper,
   Table as MuiTable,
@@ -31,12 +25,14 @@ interface Company {
 }
 
 const Table: React.FC = () => {
-  const { setSearchParams, getSearchParam } = useFilters();
+  const { setSearchParams, getSearchParam, setMultipleSearchParams } =
+    useFilters();
+
+  const sort = getSearchParam("sort") || "legal_name";
+  const dir = (getSearchParam("dir") as "asc" | "desc") || "asc";
 
   const name = getSearchParam("name") ?? "";
-
   const pageSize = Number(getSearchParam("pageSize") ?? "25");
-
   const pageIndex = Number(getSearchParam("pageIndex") ?? "0");
 
   const { data, isPending } = useGetCompanies({
@@ -45,33 +41,25 @@ const Table: React.FC = () => {
         ...(name && { name }),
         ...(pageIndex && !name && { start: pageIndex * pageSize }),
         limit: pageSize,
+        sort,
+        dir,
       },
     },
   });
 
   const totalItems = data?.total_items ?? 0;
 
-  const columns = useMemo<ColumnDef<Company>[]>(
-    () => [
-      { accessorKey: "legal_name", header: "Nome Razão" },
-      { accessorKey: "trade_name", header: "Nome Fantasia" },
-      { accessorKey: "cnae", header: "CNAE" },
+  const handleSort = (column: string) => {
+    const isAsc = sort === column && dir === "asc";
+    const newOrder = isAsc ? "desc" : "asc";
+
+    setMultipleSearchParams([
       {
-        accessorKey: "cnpj",
-        header: "CNPJ",
-        cell: (info) => Mask.formatCNPJ(String(info.getValue())),
+        sort: column,
+        dir: newOrder,
       },
-    ],
-    []
-  );
-
-  const table = useReactTable({
-    data: data?.companies ?? [],
-    columns,
-
-    getCoreRowModel: getCoreRowModel(),
-    // getSortedRowModel: getSortedRowModel(),
-  });
+    ]);
+  };
 
   const onRowsPerPageChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -86,7 +74,7 @@ const Table: React.FC = () => {
     setSearchParams("pageIndex", page.toString());
   };
 
-  const debouncedChangeHandler = debounce((value) => {
+  const debouncedChangeHandler = debounce((value: string) => {
     setSearchParams("name", value);
   }, 500);
 
@@ -122,51 +110,44 @@ const Table: React.FC = () => {
         <TableContainer style={{ overflow: "auto", maxHeight: "40rem" }}>
           <MuiTable stickyHeader>
             <TableHead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableCell
-                      key={header.id}
-                      sx={{
-                        fontWeight: "bold",
-                        position: "sticky",
-                        top: 0,
-                        backgroundColor: "#fff",
-                        zIndex: 1,
-                      }}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <TableSortLabel
-                          active={!!header.column.getIsSorted()}
-                          direction={
-                            header.column.getIsSorted() === "desc"
-                              ? "desc"
-                              : "asc"
-                          }
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </TableSortLabel>
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
+              <TableRow>
+                <TableCell>
+                  <TableSortLabel
+                    active={sort === "legal_name"}
+                    direction={sort === "legal_name" ? dir : "asc"}
+                    onClick={() => handleSort("legal_name")}
+                  >
+                    Nome Razão
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={sort === "trade_name"}
+                    direction={sort === "trade_name" ? dir : "asc"}
+                    onClick={() => handleSort("trade_name")}
+                  >
+                    Nome Fantasia
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={sort === "cnae"}
+                    direction={sort === "cnae" ? dir : "asc"}
+                    onClick={() => handleSort("cnae")}
+                  >
+                    CNAE
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>CNPJ</TableCell>
+              </TableRow>
             </TableHead>
             <TableBody>
-              {table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+              {data?.companies.map((company: Company) => (
+                <TableRow key={company.id}>
+                  <TableCell>{company.legal_name}</TableCell>
+                  <TableCell>{company.trade_name}</TableCell>
+                  <TableCell>{company.cnae}</TableCell>
+                  <TableCell>{Mask.formatCNPJ(company.cnpj)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
